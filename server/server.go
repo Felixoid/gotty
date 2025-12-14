@@ -5,16 +5,16 @@ import (
 	"crypto/tls"
 	"crypto/x509"
 	"html/template"
-	"io/ioutil"
+	"io/fs"
 	"log"
 	"net"
 	"net/http"
+	"os"
 	"regexp"
 	noesctmpl "text/template"
 	"time"
 
 	"github.com/NYTimes/gziphandler"
-	"github.com/elazarl/go-bindata-assetfs"
 	"github.com/gorilla/websocket"
 	"github.com/pkg/errors"
 
@@ -36,20 +36,25 @@ type Server struct {
 // New creates a new instance of Server.
 // Server will use the New() of the factory provided to handle each request.
 func New(factory Factory, options *Options) (*Server, error) {
-	indexData, err := Asset("static/index.html")
+	staticFS, err := StaticFS()
 	if err != nil {
-		panic("index not found") // must be in bindata
+		return nil, errors.Wrap(err, "failed to get static filesystem")
+	}
+
+	indexData, err := fs.ReadFile(staticFS, "index.html")
+	if err != nil {
+		panic("index not found in embedded files")
 	}
 	if options.IndexFile != "" {
 		path := homedir.Expand(options.IndexFile)
-		indexData, err = ioutil.ReadFile(path)
+		indexData, err = os.ReadFile(path)
 		if err != nil {
 			return nil, errors.Wrapf(err, "failed to read custom index file at `%s`", path)
 		}
 	}
 	indexTemplate, err := template.New("index").Parse(string(indexData))
 	if err != nil {
-		panic("index template parse failed") // must be valid
+		panic("index template parse failed")
 	}
 
 	titleTemplate, err := noesctmpl.New("title").Parse(options.TitleFormat)
@@ -57,13 +62,13 @@ func New(factory Factory, options *Options) (*Server, error) {
 		return nil, errors.Wrapf(err, "failed to parse window title format `%s`", options.TitleFormat)
 	}
 
-	var originChekcer func(r *http.Request) bool
+	var originChecker func(r *http.Request) bool
 	if options.WSOrigin != "" {
 		matcher, err := regexp.Compile(options.WSOrigin)
 		if err != nil {
 			return nil, errors.Wrapf(err, "failed to compile regular expression of Websocket Origin: %s", options.WSOrigin)
 		}
-		originChekcer = func(r *http.Request) bool {
+		originChecker = func(r *http.Request) bool {
 			return matcher.MatchString(r.Header.Get("Origin"))
 		}
 	}
@@ -76,7 +81,7 @@ func New(factory Factory, options *Options) (*Server, error) {
 			ReadBufferSize:  1024,
 			WriteBufferSize: 1024,
 			Subprotocols:    webtty.Protocols,
-			CheckOrigin:     originChekcer,
+			CheckOrigin:     originChecker,
 		},
 		indexTemplate: indexTemplate,
 		titleTemplate: titleTemplate,
@@ -181,9 +186,8 @@ func (server *Server) Run(ctx context.Context, options ...RunOption) error {
 }
 
 func (server *Server) setupHandlers(ctx context.Context, cancel context.CancelFunc, pathPrefix string, counter *counter) http.Handler {
-	staticFileHandler := http.FileServer(
-		&assetfs.AssetFS{Asset: Asset, AssetDir: AssetDir, Prefix: "static"},
-	)
+	staticFS, _ := StaticFS()
+	staticFileHandler := http.FileServer(http.FS(staticFS))
 
 	var siteMux = http.NewServeMux()
 	siteMux.HandleFunc(pathPrefix, server.handleIndex)
@@ -230,7 +234,7 @@ func (server *Server) setupHTTPServer(handler http.Handler) (*http.Server, error
 
 func (server *Server) tlsConfig() (*tls.Config, error) {
 	caFile := homedir.Expand(server.options.TLSCACrtFile)
-	caCert, err := ioutil.ReadFile(caFile)
+	caCert, err := os.ReadFile(caFile)
 	if err != nil {
 		return nil, errors.New("could not open CA crt file " + caFile)
 	}

@@ -1,73 +1,63 @@
 OUTPUT_DIR = ./builds
-GIT_COMMIT = `git rev-parse HEAD | cut -c1-7`
-VERSION = 2.0.0-alpha.3
-BUILD_OPTIONS = -ldflags "-X main.Version=$(VERSION) -X main.CommitID=$(GIT_COMMIT)"
-
-gotty: main.go server/*.go webtty/*.go backend/*.go Makefile
-	godep go build ${BUILD_OPTIONS}
-
-.PHONY: asset
-asset: bindata/static/js/gotty-bundle.js bindata/static/index.html bindata/static/favicon.png bindata/static/css/index.css bindata/static/css/terminal.css
-	go-bindata -prefix bindata -pkg server -ignore=\\.gitkeep -o server/asset.go bindata/...
-	gofmt -w server/asset.go
+GIT_COMMIT = $(shell git rev-parse HEAD | cut -c1-7)
+VERSION = 2.0.0
 
 .PHONY: all
-all: asset gotty
+all: static gotty
 
-bindata:
-	mkdir bindata
+.PHONY: gotty
+gotty: static
+	go build -ldflags "-X main.Version=$(VERSION) -X main.CommitID=$(GIT_COMMIT)" -o gotty
 
-bindata/static: bindata
-	mkdir bindata/static
+.PHONY: static
+static: server/static/index.html server/static/js/gotty-bundle.js server/static/css/index.css server/static/css/terminal.css server/static/favicon.png
 
-bindata/static/index.html: bindata/static resources/index.html
-	cp resources/index.html bindata/static/index.html
+server/static:
+	mkdir -p server/static/js server/static/css
 
-bindata/static/favicon.png: bindata/static resources/favicon.png
-	cp resources/favicon.png bindata/static/favicon.png
+server/static/index.html: server/static resources/index.html
+	cp resources/index.html server/static/index.html
 
-bindata/static/js: bindata/static
-	mkdir -p bindata/static/js
+server/static/favicon.png: server/static resources/favicon.png
+	cp resources/favicon.png server/static/favicon.png
 
+server/static/css/index.css: server/static resources/index.css
+	cp resources/index.css server/static/css/index.css
 
-bindata/static/js/gotty-bundle.js: bindata/static/js js/dist/gotty-bundle.js
-	cp js/dist/*.js bindata/static/js/
+server/static/css/terminal.css: server/static resources/terminal.css
+	cp resources/terminal.css server/static/css/terminal.css
 
-bindata/static/css: bindata/static
-	mkdir -p bindata/static/css
+server/static/js/gotty-bundle.js: server/static js/dist/gotty-bundle.js
+	cp js/dist/*.js server/static/js/
 
-bindata/static/css/index.css: bindata/static/css resources/index.css
-	cp resources/index.css bindata/static/css/index.css
+js/dist/gotty-bundle.js: js/src/* js/node_modules/.package-lock.json
+	cd js && npx webpack
 
-bindata/static/css/terminal.css: bindata/static/css resources/terminal.css
-	cp resources/terminal.css bindata/static/css/terminal.css
+js/node_modules/.package-lock.json: js/package.json
+	cd js && npm install
 
-js/dist/gotty-bundle.js: js/src/* js/node_modules/webpack
-	cd js && \
-	npx webpack
+.PHONY: clean
+clean:
+	rm -rf gotty server/static builds
 
-js/node_modules/webpack:
-	cd js && \
-	npm install
-
-tools:
-	go get github.com/tools/godep
-	go get github.com/mitchellh/gox
-	go get github.com/tcnksm/ghr
-	go get github.com/jteeuwen/go-bindata/...
-
+.PHONY: test
 test:
-	if [ `go fmt $(go list ./... | grep -v /vendor/) | wc -l` -gt 0 ]; then echo "go fmt error"; exit 1; fi
+	go test ./...
 
-cross_compile:
-	GOARM=5 gox -os="darwin linux freebsd netbsd openbsd" -arch="386 amd64 arm" -osarch="!darwin/arm" -output "${OUTPUT_DIR}/pkg/{{.OS}}_{{.Arch}}/{{.Dir}}"
+.PHONY: fmt
+fmt:
+	go fmt ./...
+	cd js && npm run format 2>/dev/null || true
 
-targz:
+.PHONY: cross_compile
+cross_compile: static
+	GOARM=5 gox -os="darwin linux freebsd netbsd openbsd" -arch="386 amd64 arm arm64" \
+		-osarch="!darwin/386 !darwin/arm" \
+		-ldflags "-X main.Version=$(VERSION) -X main.CommitID=$(GIT_COMMIT)" \
+		-output "${OUTPUT_DIR}/pkg/{{.OS}}_{{.Arch}}/{{.Dir}}"
+
+.PHONY: release
+release: cross_compile
 	mkdir -p ${OUTPUT_DIR}/dist
 	cd ${OUTPUT_DIR}/pkg/; for osarch in *; do (cd $$osarch; tar zcvf ../../dist/gotty_${VERSION}_$$osarch.tar.gz ./*); done;
-
-shasums:
 	cd ${OUTPUT_DIR}/dist; sha256sum * > ./SHA256SUMS
-
-release:
-	ghr -c ${GIT_COMMIT} --delete --prerelease -u yudai -r gotty pre-release ${OUTPUT_DIR}/dist

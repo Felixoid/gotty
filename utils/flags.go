@@ -1,14 +1,13 @@
 package utils
 
 import (
-	"io/ioutil"
 	"log"
 	"os"
 	"reflect"
 	"strings"
 
-	"github.com/codegangsta/cli"
 	"github.com/fatih/structs"
+	"github.com/urfave/cli"
 	"github.com/yudai/hcl"
 
 	"github.com/yudai/gotty/pkg/homedir"
@@ -107,9 +106,8 @@ func ApplyConfigFile(filePath string, options ...interface{}) error {
 		return err
 	}
 
-	fileString := []byte{}
 	log.Printf("Loading config file at: %s", filePath)
-	fileString, err := ioutil.ReadFile(filePath)
+	fileString, err := os.ReadFile(filePath)
 	if err != nil {
 		return err
 	}

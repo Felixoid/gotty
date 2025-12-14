@@ -1,4 +1,5 @@
 gotty
 bindata
 builds
+server/static
 js/node_modules/*
