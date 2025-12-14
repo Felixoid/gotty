@@ -1,7 +1,8 @@
-import { init, Terminal as GhosttyTerminal } from "ghostty-web";
+import { init, Terminal as GhosttyTerminal, FitAddon } from "ghostty-web";
 export declare class Ghostty {
     elem: HTMLElement;
     term: GhosttyTerminal;
+    fitAddon: FitAddon;
     resizeListener: () => void;
     resizeObserver: ResizeObserver;
     message: HTMLElement;

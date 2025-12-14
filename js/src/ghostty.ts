@@ -1,8 +1,9 @@
-import { init, Terminal as GhosttyTerminal } from "ghostty-web";
+import { init, Terminal as GhosttyTerminal, FitAddon } from "ghostty-web";
 
 export class Ghostty {
     elem: HTMLElement;
     term: GhosttyTerminal;
+    fitAddon: FitAddon;
     resizeListener: () => void;
     resizeObserver: ResizeObserver;
 
@@ -32,8 +33,13 @@ export class Ghostty {
 
         this.term.open(elem);
 
+        // Setup fit addon for auto-resizing
+        this.fitAddon = new FitAddon();
+        this.term.loadAddon(this.fitAddon);
+        this.fitAddon.fit();
+
         this.resizeListener = () => {
-            // Ghostty-web should auto-fit, but trigger resize event
+            this.fitAddon.fit();
             const dims = this.info();
             this.showMessage(`${dims.columns}x${dims.rows}`, this.messageTimeout);
             if (this.resizeCallback) {
