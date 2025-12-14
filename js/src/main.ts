@@ -1,22 +1,23 @@
-import { Hterm } from "./hterm";
-import { Xterm } from "./xterm";
+import { Ghostty, initGhostty } from "./ghostty";
 import { Terminal, WebTTY, protocols } from "./webtty";
 import { ConnectionFactory } from "./websocket";
 
-// @TODO remove these
 declare var gotty_auth_token: string;
 declare var gotty_term: string;
 
-const elem = document.getElementById("terminal")
-
-if (elem !== null) {
-    var term: Terminal;
-    if (gotty_term == "hterm") {
-        term = new Hterm(elem);
-    } else {
-        term = new Xterm(elem);
+async function main() {
+    const elem = document.getElementById("terminal");
+    if (elem === null) {
+        console.error("Terminal element not found");
+        return;
     }
-    const httpsEnabled = window.location.protocol == "https:";
+
+    // Initialize ghostty-web WASM
+    await initGhostty();
+
+    const term: Terminal = new Ghostty(elem);
+
+    const httpsEnabled = window.location.protocol === "https:";
     const url = (httpsEnabled ? 'wss://' : 'ws://') + window.location.host + window.location.pathname + 'ws';
     const args = window.location.search;
     const factory = new ConnectionFactory(url, protocols);
@@ -27,4 +28,8 @@ if (elem !== null) {
         closer();
         term.close();
     });
-};
+}
+
+main().catch(err => {
+    console.error("Failed to initialize terminal:", err);
+});

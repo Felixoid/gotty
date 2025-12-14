@@ -1,0 +1,1 @@
+{"version":3,"file":"539.gotty-bundle.js","mappings":"gHAAA,MAAMA,EAAI,CAAC,C","sources":["webpack:///./node_modules/ghostty-web/dist/__vite-browser-external-2447137e.js"],"sourcesContent":["const e = {};\nexport {\n  e as default\n};\n"],"names":["e"],"ignoreList":[],"sourceRoot":""}

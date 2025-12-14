@@ -1,20 +1,18 @@
 {
   "compilerOptions": {
-      "strictNullChecks": true,
-      "noUnusedLocals" : true,
-      "noImplicitThis": true,
-      "alwaysStrict": true,
-      "outDir": "./dist/",
-      "declaration": true,
-      "sourceMap": true,
-      "target": "es5",
-      "module": "commonJS",
-      "baseUrl": ".",
-      "paths": {
-          "*": ["./typings/*"]
-      }
+    "strict": true,
+    "noUnusedLocals": true,
+    "noImplicitThis": true,
+    "outDir": "./dist/",
+    "declaration": true,
+    "sourceMap": true,
+    "target": "ES2020",
+    "module": "ES2020",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "lib": ["ES2020", "DOM"]
   },
-    "exclude": [
-      "node_modules"
-    ]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules"]
 }
