@@ -104,7 +104,9 @@ export class WebTTY {
                 const payload = data.slice(1);
                 switch (data[0]) {
                     case msgOutput:
-                        this.term.output(atob(payload));
+                        // Decode base64 to UTF-8 properly (atob decodes as Latin-1)
+                        const bytes = Uint8Array.from(atob(payload), c => c.charCodeAt(0));
+                        this.term.output(new TextDecoder('utf-8').decode(bytes));
                         break;
                     case msgPong:
                         break;
