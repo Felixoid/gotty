@@ -10,7 +10,14 @@ export declare class Ghostty {
     messageTimer: ReturnType<typeof setTimeout> | null;
     inputCallback: ((input: string) => void) | null;
     resizeCallback: ((columns: number, rows: number) => void) | null;
+    private mouseButtonsPressed;
+    private lastMouseCol;
+    private lastMouseRow;
     constructor(elem: HTMLElement);
+    private setupMouseTracking;
+    private pixelToCell;
+    private handleMouseEvent;
+    private handleWheelEvent;
     info(): {
         columns: number;
         rows: number;
