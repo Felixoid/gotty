@@ -151,13 +151,9 @@ $ gotty -w docker run -it --rm busybox
 
 ## Development
 
-You can build a binary using the following commands. Windows is not supported now. go1.9 is required.
+You can build a binary using the following commands. Go 1.25.5 or later is required.
 
 ```sh
-# Install tools
-go get github.com/jteeuwen/go-bindata/...
-go get github.com/tools/godep
-
 # Build
 make
 ```
