@@ -10,35 +10,35 @@ gotty: static
 	go build -ldflags "-X main.Version=$(VERSION) -X main.CommitID=$(GIT_COMMIT)" -o gotty
 
 .PHONY: static
-static: server/static/index.html server/static/js/gotty-bundle.js server/static/css/index.css server/static/css/terminal.css server/static/favicon.png
+static: pkg/embed/static/index.html pkg/embed/static/js/gotty-bundle.js pkg/embed/static/css/index.css pkg/embed/static/css/terminal.css pkg/embed/static/favicon.png
 
-server/static:
-	mkdir -p server/static/js server/static/css
+pkg/embed/static:
+	mkdir -p pkg/embed/static/js pkg/embed/static/css
 
-server/static/index.html: server/static resources/index.html
-	cp resources/index.html server/static/index.html
+pkg/embed/static/index.html: pkg/embed/static
+	cp pkg/embed/static/resources/index.html pkg/embed/static/index.html
 
-server/static/favicon.png: server/static resources/favicon.png
-	cp resources/favicon.png server/static/favicon.png
+pkg/embed/static/favicon.png: pkg/embed/static
+	cp pkg/embed/static/resources/favicon.png pkg/embed/static/favicon.png
 
-server/static/css/index.css: server/static resources/index.css
-	cp resources/index.css server/static/css/index.css
+pkg/embed/static/css/index.css: pkg/embed/static
+	cp pkg/embed/static/resources/index.css pkg/embed/static/css/index.css
 
-server/static/css/terminal.css: server/static resources/terminal.css
-	cp resources/terminal.css server/static/css/terminal.css
+pkg/embed/static/css/terminal.css: pkg/embed/static
+	cp pkg/embed/static/resources/terminal.css pkg/embed/static/css/terminal.css
 
-server/static/js/gotty-bundle.js: server/static js/dist/gotty-bundle.js
-	cp js/dist/*.js server/static/js/
+pkg/embed/static/js/gotty-bundle.js: pkg/embed/static
+	cp pkg/embed/static/js/dist/*.js pkg/embed/static/js/
 
-js/dist/gotty-bundle.js: js/src/* js/node_modules/.package-lock.json
-	cd js && npx webpack
+pkg/embed/static/js/dist/gotty-bundle.js: pkg/embed/static/js/src/* pkg/embed/static/js/node_modules/.package-lock.json
+	cd pkg/embed/static/js && npx webpack
 
-js/node_modules/.package-lock.json: js/package.json
-	cd js && npm install
+pkg/embed/static/js/node_modules/.package-lock.json: pkg/embed/static/js/package.json
+	cd pkg/embed/static/js && npm install
 
 .PHONY: clean
 clean:
-	rm -rf gotty server/static builds
+	rm -rf gotty pkg/embed/static builds
 
 .PHONY: test
 test:
@@ -47,7 +47,7 @@ test:
 .PHONY: fmt
 fmt:
 	go fmt ./...
-	cd js && npm run format 2>/dev/null || true
+	cd pkg/embed/static/js && npm run format 2>/dev/null || true
 
 .PHONY: cross_compile
 cross_compile: static

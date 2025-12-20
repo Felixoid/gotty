@@ -1,0 +1,29 @@
+/* Load Symbols Nerd Font for icon support (lazygit, etc.) */
+@font-face {
+    font-family: 'Symbols Nerd Font Mono';
+    src: url('https://cdn.jsdelivr.net/gh/ryanoasis/nerd-fonts@v3.3.0/patched-fonts/NerdFontsSymbolsOnly/SymbolsNerdFontMono-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+.terminal-overlay {
+    font-family: "Symbols Nerd Font Mono", "Hack Nerd Font", "DejaVu Sans Mono", "Everson Mono", FreeMono, Menlo, Terminal, monospace, "Apple Symbols";
+    border-radius: 15px;
+    font-size: xx-large;
+    color: black;
+    background: white;
+    opacity: 0.75;
+    padding: 0.2em 0.5em 0.2em 0.5em;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    user-select: none;
+    transition: opacity 180ms ease-in;
+    z-index: 1000;
+}
+
+#terminal {
+    position: relative;
+}

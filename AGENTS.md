@@ -6,6 +6,8 @@ Read the @README.md
 
 This project uses **bd** (beads) for issue tracking. Run `bd onboard` to get started.
 
+When manually testing this project, run the server using the `background-job` MCP; and you can use a web browser via the `chrome-devtools` MCP.
+
 ## Quick Reference
 
 ```bash
