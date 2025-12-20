@@ -1,6 +1,6 @@
 OUTPUT_DIR = ./builds
 GIT_COMMIT = $(shell git rev-parse HEAD | cut -c1-7)
-VERSION = 2.0.0
+VERSION = 2.1.0
 
 .PHONY: all
 all: static gotty
