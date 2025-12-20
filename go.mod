@@ -1,4 +1,4 @@
-module github.com/yudai/gotty
+module github.com/jpillora/gotty
 
 go 1.25.5
 

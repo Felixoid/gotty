@@ -18,10 +18,10 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/pkg/errors"
 
-	"github.com/yudai/gotty/pkg/embed"
-	"github.com/yudai/gotty/pkg/homedir"
-	"github.com/yudai/gotty/pkg/randomstring"
-	"github.com/yudai/gotty/pkg/webtty"
+	"github.com/jpillora/gotty/pkg/embed"
+	"github.com/jpillora/gotty/pkg/homedir"
+	"github.com/jpillora/gotty/pkg/randomstring"
+	"github.com/jpillora/gotty/pkg/webtty"
 )
 
 // Server provides a webtty HTTP endpoint.
