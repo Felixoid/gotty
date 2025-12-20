@@ -8,6 +8,25 @@ This project uses **bd** (beads) for issue tracking. Run `bd onboard` to get sta
 
 When manually testing this project, run the server using the `background-job` MCP; and you can use a web browser via the `chrome-devtools` MCP.
 
+## Important Learnings from Recent Refactoring
+
+**Directory Structure & Go Modules:**
+- When moving Go code to `pkg/` structure, ALWAYS check `.gitignore` - it may ignore files you need (e.g., `app` was ignored but `pkg/app/` wasn't)
+- Use `go:embed` for static assets - place them in `pkg/embed/static/` with embed directive in `pkg/embed/embed.go`
+- When renaming modules (e.g., `yudai/gotty` → `jpillora/gotty`), update ALL import paths in Go files
+- Update documentation references: README badges, links, `go get` commands, homebrew taps
+
+**CI/CD & Releases:**
+- Goreleaser config must point to correct main package path (e.g., `main: ./pkg/app`)
+- Version bumping: Use minor version (2.1.0 → 2.2.0) for major refactors, patch for small fixes
+- Test builds after refactoring: `go build ./pkg/app` and `make gotty`
+- Clean up accidentally committed binaries: `git rm <file>` and recommit
+
+**Build System:**
+- Makefile uses `./pkg/app` as build target after refactor
+- Static assets built to `pkg/embed/static/` and embedded via `go:embed`
+- Frontend built via webpack in `pkg/embed/static/js/`
+
 ## Quick Reference
 
 ```bash
