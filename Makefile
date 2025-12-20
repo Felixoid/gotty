@@ -1,13 +1,13 @@
 OUTPUT_DIR = ./builds
 GIT_COMMIT = $(shell git rev-parse HEAD | cut -c1-7)
-VERSION = 2.1.0
+VERSION = 2.2.0
 
 .PHONY: all
 all: static gotty
 
 .PHONY: gotty
 gotty: static
-	go build -ldflags "-X main.Version=$(VERSION) -X main.CommitID=$(GIT_COMMIT)" -o gotty
+	go build -ldflags "-X main.Version=$(VERSION) -X main.CommitID=$(GIT_COMMIT)" -o gotty ./pkg/app
 
 .PHONY: static
 static: pkg/embed/static/index.html pkg/embed/static/js/gotty-bundle.js pkg/embed/static/css/index.css pkg/embed/static/css/terminal.css pkg/embed/static/favicon.png
