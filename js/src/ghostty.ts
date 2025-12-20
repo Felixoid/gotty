@@ -29,8 +29,8 @@ export class Ghostty {
 
         this.term = new GhosttyTerminal({
             fontSize: 14,
-            // Include emoji fonts and common monospace fonts with good Unicode coverage
-            fontFamily: '"Hack Nerd Font", "DejaVu Sans Mono", "Everson Mono", FreeMono, Menlo, Terminal, "Noto Sans Mono", "Noto Color Emoji", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", monospace',
+            // Include Nerd Font symbols (loaded via CSS), emoji fonts, and common monospace fonts
+            fontFamily: '"Symbols Nerd Font Mono", "Hack Nerd Font", "DejaVu Sans Mono", "Everson Mono", FreeMono, Menlo, Terminal, "Noto Sans Mono", "Noto Color Emoji", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", monospace',
             theme: {
                 background: '#000000',
                 foreground: '#ffffff',
