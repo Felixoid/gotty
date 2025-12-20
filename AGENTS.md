@@ -27,6 +27,11 @@ When manually testing this project, run the server using the `background-job` MC
 - Static assets built to `pkg/embed/static/` and embedded via `go:embed`
 - Frontend built via webpack in `pkg/embed/static/js/`
 
+**Repository Maintenance:**
+- Watch for accidentally committed binaries (check with `git rev-list --objects --all | git cat-file --batch-check | sort -k3nr | head -10`)
+- Remove binaries from history using: `git filter-repo --path app --invert-paths` (requires git-filter-repo)
+- Always check `.gitignore` includes build artifacts: `gotty`, `pkg/embed/static`, etc.
+
 ## Quick Reference
 
 ```bash
