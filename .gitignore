@@ -1,6 +1,5 @@
 gotty
-app
 bindata
 builds
-server/static
-js/node_modules/*
+pkg/embed/static
+pkg/embed/static/js/node_modules/*
