@@ -28,7 +28,7 @@ $ brew install jpillora/gotty/gotty
 
 ## `go install` Installation (Development)
 
-If you have a Go language environment, you can install GoTTY with the `go get` command. However, this command builds a binary file from the latest master branch, which can include unstable or breaking changes. GoTTY requires go1.9 or later.
+If you have a Go language environment, you can install GoTTY with the `go install` command. However, this command builds a binary file from the latest master branch, which can include unstable or breaking changes. GoTTY requires go1.24 or later.
 
 ```sh
 $ go install github.com/jpillora/gotty/v2/pkg/gotty@latest
