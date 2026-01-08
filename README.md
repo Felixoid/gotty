@@ -26,12 +26,12 @@ You can install GoTTY with [Homebrew](http://brew.sh/) as well.
 $ brew install jpillora/gotty/gotty
 ```
 
-## `go get` Installation (Development)
+## `go install` Installation (Development)
 
 If you have a Go language environment, you can install GoTTY with the `go get` command. However, this command builds a binary file from the latest master branch, which can include unstable or breaking changes. GoTTY requires go1.9 or later.
 
 ```sh
-$ go get github.com/jpillora/gotty
+$ go install github.com/jpillora/gotty/v2/pkg/gotty@latest
 ```
 
 # Usage
